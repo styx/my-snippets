@@ -1,0 +1,23 @@
+# Elixir
+
+snippet defs
+defmodule ${1:module_name} do
+  @derive [Access]
+  defstruct ${2:fields}
+  @type t :: %$1{$2}
+
+  def new, do: %$1{}
+end
+endsnippet
+
+snippet MOD
+__MODULE__
+endsnippet
+
+snippet defin "def function(n), do: n"
+def ${1:name}, do: ${2}
+endsnippet
+
+snippet defpin
+defp ${1:name}, do: ${2}
+endsnippet
