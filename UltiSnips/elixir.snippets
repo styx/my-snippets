@@ -50,8 +50,12 @@ snippet defsup
 defmodule `!p snip.rv = elixir_mix_module_name()` do
   use Supervisor
 
+  def start_link do
+    Supervisor.start_link(__MODULE__, nil)
+  end
+
   def init(${1:_}) do
-    processes = [worker(${2:worker_module_name}, [${3:params}])${4}]
+    processes = [worker(${2:worker_module_name}, [${3:params}])$0]
     supervise(processes, strategy: ${5::one_for_one})
   end
 end
