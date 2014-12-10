@@ -1,14 +1,14 @@
 # Elixir
 
-snippet defs
-defmodule ${1:module_name} do
-  @derive [Access]
-  defstruct ${2:fields}
-  @type t :: %$1{$2}
+global !p
+def val_or_nil(tx):
+  return ('nil' if tx == '_' else tx)
 
-  def new, do: %$1{}
-end
-endsnippet
+def module_title(snip):
+  file_start = snip.fn.split('.')[0].capitalize()
+  return '.' + file_start
+endglobal
+
 
 snippet MOD
 __MODULE__
@@ -20,4 +20,53 @@ endsnippet
 
 snippet defpin
 defp ${1:name}, do: ${2}
+endsnippet
+
+snippet defst
+defmodule ${1:module_namespace}`!p snip.rv = module_title(snip)` do
+  @derive [Access]
+  defstruct ${2:fields}
+  @type t :: %$1{$0$2}
+
+  def new, do: %$1{}
+end
+endsnippet
+
+snippet defsup
+defmodule ${1:module_namespace}`!p snip.rv = module_title(snip)` do
+  use Supervisor
+
+  def init(${2:_}) do
+    processes = [worker(${3:worker_module_namespace}, [${4:params}])${5}]
+    supervise(processes, strategy: ${6::one_for_one})
+  end
+end
+endsnippet
+
+snippet defgs
+defmodule ${1:module_namespace}`!p snip.rv = module_title(snip)` do
+
+  use GenServer
+
+  @doc """
+  ${2:module_doc}
+  """
+
+  def start(${3:_}) do
+    GenServer.start_link(__MODULE__, `!p snip.rv = val_or_nil(t[3])`)
+  end
+
+  def init($3) do
+    {:ok, `!p snip.rv = val_or_nil(t[3])`}
+  end
+$0
+  def handle_cast({:}, state) do
+    {:noreply, state}
+  end
+
+  def handle_call({:}, _caller, state) do
+    {:reply, result, state}
+  end
+
+end
 endsnippet
