@@ -7,13 +7,23 @@ import vim
 import os.path
 
 def val_or_nil(tx):
-  return ('nil' if tx == '_' else tx)
+  result = tx
+  if result and result[0] == '(':
+    result = result[1:]
+  if result and result[-1] == ')':
+    result = result[:-1]
+  if result == '_' or result == '':
+    result = 'nil'
+  return result
 
 def elixir_mix_module_name():
   current_file_path_without_ext = vim.eval('expand("%:p:r")') or ""
   m = re.search(r'/lib(.+)$', current_file_path_without_ext)
   name_parts = m.group().split('/lib/')[-1].split('/')
-  return '.'.join(map(lambda x:x.capitalize(), name_parts))
+  cap_module_part = lambda np:''.join(map(lambda x:x.capitalize(), np.split('_')))
+  capitalized_name_parts = map(cap_module_part, name_parts)
+
+  return '.'.join(capitalized_name_parts)
 
 endglobal
 
@@ -80,11 +90,11 @@ defmodule ${1:`!p snip.rv = elixir_mix_module_name()`} do
   ${2}
   """
 
-  def start(${3:_}) do
-    GenServer.start_link(__MODULE__, `!p snip.rv = the_val = val_or_nil(t[2])`)
+  def start${3} do
+    GenServer.start_link(__MODULE__, `!p snip.rv = the_val = val_or_nil(t[3])`)
   end
 
-  def init($3) do
+  def init$3 do
     {:ok, `!p snip.rv = the_val`}
   end
 $0
