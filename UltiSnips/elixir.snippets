@@ -16,6 +16,16 @@ def val_or_nil(tx):
     result = 'nil'
   return result
 
+def val_or_ignore(tx):
+  result = tx
+  if result and result[0] == '(':
+    result = result[1:]
+  if result and result[-1] == ')':
+    result = result[:-1]
+  if result == '':
+    result = '_'
+  return result
+
 def elixir_mix_module_name():
   current_file_path_without_ext = vim.eval('expand("%:p:r")') or ""
   m = re.search(r'/lib(.+)$', current_file_path_without_ext)
@@ -94,7 +104,7 @@ defmodule ${1:`!p snip.rv = elixir_mix_module_name()`} do
     GenServer.start_link(__MODULE__, `!p snip.rv = the_val = val_or_nil(t[3])`)
   end
 
-  def init$3 do
+  def init(`!p snip.rv = val_or_ignore(t[3])`) do
     {:ok, `!p snip.rv = the_val`}
   end
 $0
