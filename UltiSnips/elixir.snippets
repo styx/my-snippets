@@ -51,6 +51,12 @@ snippet bp
 IEx.pry
 endsnippet
 
+snippet fi
+for ${1} <- ${2}, into: ${3} do
+  $0
+end
+endsnippet
+
 snippet defin "def function(n), do: n"
 def ${1:name}, do: ${2}
 endsnippet
